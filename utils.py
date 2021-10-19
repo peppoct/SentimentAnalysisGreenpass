@@ -1,3 +1,3 @@
 
 def save_dataset(tweets, name):
-    tweets.to_csv('./dataset/data/'+name+'.csv', index=False)
+    tweets.to_csv('./dataset/'+name+'.csv', index=False)

@@ -32,7 +32,7 @@ def remove_punctuation(row_field):
     return tweet
 
 def remove_from_string(tweet):
-    # Replaces URLs with the word URL
+    # Replaces URLs with
     tweet = re.sub(r'((www\.[\S]+)|(https?://[\S]+))', '', tweet)
     # Replace @handle with the word USER_MENTION
     tweet = re.sub(r'@[\S]+', '', tweet)
@@ -42,6 +42,7 @@ def remove_from_string(tweet):
     tweet = re.sub(r'\brt\b', '', tweet)
     # Replace 2+ dots with space
     tweet = re.sub(r'\.{2,}', ' ', tweet)
+
     return tweet
 
 
@@ -84,10 +85,12 @@ def remove_emojis(tweet):
     return tweet
 
 def clean(tweet):
+    tweet = remove_from_string(tweet)
     tweet = remove_emojis(tweet)
     tweet = format(tweet)
-    tweet = remove_from_string(tweet)
     tweet = remove_punctuation(tweet)
+    # Remove spaces
+    tweet = re.sub(r'\s+', ' ', tweet)
     return tweet
 
 if __name__ == '__main__':
