@@ -1,20 +1,27 @@
 import pandas as pd
-from sklearn import svm
+
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from nltk.corpus import stopwords
+from nltk.stem.snowball import SnowballStemmer
+
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import svm
+
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-from sklearn.linear_model import LogisticRegression
+
 from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier
+
 from sklearn.model_selection import KFold
-from sklearn.neighbors import KNeighborsClassifier
+
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import ComplementNB
 from scipy.stats import ttest_rel
-from mlxtend.evaluate import paired_ttest_5x2cv
+
 from sklearn.model_selection import cross_val_score, cross_val_predict
 
 """"
@@ -37,12 +44,23 @@ labels_codes = {
 }
 
 
+stop_words = set(stopwords.words('italian'))
+stemmer = SnowballStemmer('italian')
 
+class StemmedCountVectorizer(CountVectorizer):
+    def __init__(self, stemmer, stop_words):
+        super(StemmedCountVectorizer, self).__init__(stop_words=stop_words)
+        self.stemmer = stemmer
 
+    def build_analyzer(self):
+        analyzer = super(StemmedCountVectorizer, self).build_analyzer()
+        return lambda doc:(self.stemmer.stem(w) for w in analyzer(doc))
+
+stem_vectorizer = StemmedCountVectorizer(stemmer, stop_words)
 
 decisionTree = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=1000)),
     ('clf', DecisionTreeClassifier(random_state=0)),
     ])
@@ -52,9 +70,9 @@ print("Accuracy DecisionTree : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()
 print(scores)
 
 bg_svm = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
-    ('fselect', SelectKBest(chi2, k=4000)),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
+    ('fselect', SelectKBest(chi2, k=29)),
     ('clf', BaggingClassifier(base_estimator=svm.SVC(), n_estimators=30)),
     ])
 
@@ -63,8 +81,8 @@ print("Accuracy BG-SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 randomForest = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
     ('fselect', SelectKBest(chi2, k=4000)),
     ('clf', RandomForestClassifier(criterion="gini", min_samples_split=10, n_estimators=1200)),
     ])
@@ -74,8 +92,8 @@ print("Accuracy RandomForest : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()
 print(scores)
 
 logisticRegression = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
     ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', LogisticRegression(C=1, max_iter=1500)),
     ])
@@ -85,8 +103,8 @@ print("Accuracy LogisticRegression : %0.2f (+/- %0.2f)" % (scores.mean(), scores
 print(scores)
 
 svm = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
     ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', svm.SVC(C=10, gamma=0.1)),
     ])
@@ -96,8 +114,8 @@ print("Accuracy SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 knn = Pipeline([
-    ('vect', CountVectorizer()),
-    ('tfidf', TfidfTransformer()),
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
     ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', KNeighborsClassifier(n_neighbors=3)),
     ])
