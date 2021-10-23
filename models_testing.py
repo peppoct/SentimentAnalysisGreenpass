@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
+from text_normalization import normalize_text
 
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -36,6 +37,10 @@ def t_test(pipelineA, pipelineB, dataset, labels, iter):
 
 # ------------------------ loading input data ------------------------ #
 dataset = pd.read_csv("./dataset/training_set_july_2021_first_2_weeks.csv")
+data = dataset['content']
+label = dataset.sentiment.values
+
+data = normalize_text(data)
 
 labels_codes = {
     "positive" : 1,
@@ -59,13 +64,13 @@ class StemmedCountVectorizer(CountVectorizer):
 stem_vectorizer = StemmedCountVectorizer(stemmer, stop_words)
 
 decisionTree = Pipeline([
-    ('vect', stem_vectorizer),
+    ('vect', CountVectorizer()),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=1000)),
     ('clf', DecisionTreeClassifier(random_state=0)),
     ])
 
-scores = cross_val_score(decisionTree, dataset.content, dataset.sentiment, cv=10)
+scores = cross_val_score(decisionTree, data, label, cv=10)
 print("Accuracy DecisionTree : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
@@ -76,6 +81,7 @@ bg_svm = Pipeline([
     ('clf', BaggingClassifier(base_estimator=svm.SVC(), n_estimators=30)),
     ])
 
+print(stemmer.stop_words)
 scores = cross_val_score(bg_svm, dataset.content, dataset.sentiment, cv=10)
 print("Accuracy BG-SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)

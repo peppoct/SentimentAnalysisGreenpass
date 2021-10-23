@@ -95,12 +95,10 @@ def clean(tweet):
 
 if __name__ == '__main__':
     dataset = pd.read_csv('./dataset/data/training_set_july.csv')
-    i = 0
+
     for row_index, tweet in dataset.iterrows():
 
         processed_tweet = clean(tweet.content)
-        #print(tweet.content + " ----- > ", processed_tweet)
-        i = i + 1
         if (len(processed_tweet) > 0):
             dataset.loc[row_index, "content"] = processed_tweet
         else:
