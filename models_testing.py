@@ -4,7 +4,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from text_normalization import normalize_text
-
+from pre_processing import clening
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -36,11 +36,15 @@ def t_test(pipelineA, pipelineB, dataset, labels, iter):
 
 
 # ------------------------ loading input data ------------------------ #
-dataset = pd.read_csv("./dataset/training_set_july_2021_first_2_weeks.csv")
+dataset = pd.read_csv("./dataset/july_to_be_targeted.csv")
+dataset = dataset[~dataset['sentiment'].isnull()]
+dataset = dataset[['content', 'sentiment']]
+dataset = clening(dataset)
 data = dataset['content']
-label = dataset.sentiment.values
+label = dataset['sentiment']
 
-data = normalize_text(data)
+#data = normalize_text(data)
+
 
 labels_codes = {
     "positive" : 1,
@@ -64,9 +68,9 @@ class StemmedCountVectorizer(CountVectorizer):
 stem_vectorizer = StemmedCountVectorizer(stemmer, stop_words)
 
 decisionTree = Pipeline([
-    ('vect', CountVectorizer()),
+    ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=1000)),
+    ('fselect', SelectKBest(chi2, k=1100)),
     ('clf', DecisionTreeClassifier(random_state=0)),
     ])
 
@@ -77,41 +81,40 @@ print(scores)
 bg_svm = Pipeline([
     ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=29)),
+    ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', BaggingClassifier(base_estimator=svm.SVC(), n_estimators=30)),
     ])
 
-print(stemmer.stop_words)
-scores = cross_val_score(bg_svm, dataset.content, dataset.sentiment, cv=10)
+scores = cross_val_score(bg_svm, data, label, cv=10)
 print("Accuracy BG-SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 randomForest = Pipeline([
     ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=4000)),
+    ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', RandomForestClassifier(criterion="gini", min_samples_split=10, n_estimators=1200)),
     ])
 
-scores = cross_val_score(randomForest, dataset.content, dataset.sentiment, cv=10)
+scores = cross_val_score(randomForest, data, label, cv=10)
 print("Accuracy RandomForest : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 logisticRegression = Pipeline([
     ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=3500)),
+    ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', LogisticRegression(C=1, max_iter=1500)),
     ])
 
-scores = cross_val_score(logisticRegression, dataset.content, dataset.sentiment, cv=10)
+scores = cross_val_score(logisticRegression, data, label, cv=10)
 print("Accuracy LogisticRegression : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 svm = Pipeline([
     ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=3500)),
+    ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', svm.SVC(C=10, gamma=0.1)),
     ])
 
@@ -122,7 +125,7 @@ print(scores)
 knn = Pipeline([
     ('vect', stem_vectorizer),
     ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=3500)),
+    ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', KNeighborsClassifier(n_neighbors=3)),
     ])
 

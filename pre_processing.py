@@ -93,6 +93,19 @@ def clean(tweet):
     tweet = re.sub(r'\s+', ' ', tweet)
     return tweet
 
+
+def clening(dataset):
+    for row_index, tweet in dataset.iterrows():
+
+        processed_tweet = clean(tweet.content)
+        if (len(processed_tweet) > 0):
+            dataset.loc[row_index, "content"] = processed_tweet
+        else:
+            dataset.drop(index=row_index, inplace=True)
+
+    return dataset
+
+
 if __name__ == '__main__':
     dataset = pd.read_csv('./dataset/data/training_set_july.csv')
 
