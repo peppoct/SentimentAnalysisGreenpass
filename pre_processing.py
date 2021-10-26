@@ -106,7 +106,9 @@ def clening(dataset):
 
 
 if __name__ == '__main__':
-    dataset = pd.read_csv('./dataset/data/training_set_july.csv')
+    dataset = pd.read_csv('./dataset/Foglio di lavoro senza nome - 400a.csv')
+    dataset = dataset[['id', 'content', 'sentiment']]
+    dataset = dataset[~dataset['sentiment'].isnull()]
 
     for row_index, tweet in dataset.iterrows():
 
@@ -116,4 +118,4 @@ if __name__ == '__main__':
         else:
             dataset.drop(index=row_index, inplace=True)
 
-    u.save_dataset(dataset, "training_set_july_2021_first_2_weeks")
+    u.save_dataset(dataset, "400a")
