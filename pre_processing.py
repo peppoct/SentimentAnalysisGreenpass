@@ -26,7 +26,6 @@ def remove_punctuation(row_field):
         row_field = row_field.replace(punct_sign, " ")
         row_field = row_field.replace("’", " ")
         row_field = row_field.replace("”", " ")
-        row_field = row_field.replace("“", " ")
         tweet = row_field.replace("\n", " ")
 
     return tweet

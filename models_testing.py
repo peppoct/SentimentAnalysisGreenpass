@@ -5,8 +5,11 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 from text_normalization import normalize_text
 from pre_processing import clening
+
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -34,11 +37,17 @@ def t_test(pipelineA, pipelineB, dataset, labels, iter):
      ttest_rel(a, b)
     """
 
-
 # ------------------------ loading input data ------------------------ #
 dataset = pd.read_csv("./dataset/july_to_be_targeted.csv")
-dataset = dataset[~dataset['sentiment'].isnull()]
 dataset = dataset[['content', 'sentiment']]
+dataset = dataset[~dataset['sentiment'].isnull()]
+neutral = dataset[dataset['sentiment'] == 0.0]
+
+neutral = neutral.sample(n=250)
+positive = dataset[dataset['sentiment'] == 1.0]
+negative = dataset[dataset['sentiment'] == -1.0]
+dataset = pd.concat([neutral, positive, negative])
+dataset = dataset.sample(frac=1)
 dataset = clening(dataset)
 data = dataset['content']
 label = dataset['sentiment']
@@ -68,7 +77,7 @@ class StemmedCountVectorizer(CountVectorizer):
 stem_vectorizer = StemmedCountVectorizer(stemmer, stop_words)
 
 decisionTree = Pipeline([
-    ('vect', stem_vectorizer),
+    ('vect', CountVectorizer()),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=1100)),
     ('clf', DecisionTreeClassifier(random_state=0)),
@@ -79,7 +88,7 @@ print("Accuracy DecisionTree : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std()
 print(scores)
 
 bg_svm = Pipeline([
-    ('vect', stem_vectorizer),
+    ('vect', CountVectorizer()),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=1500)),
     ('clf', BaggingClassifier(base_estimator=svm.SVC(), n_estimators=30)),
@@ -131,6 +140,17 @@ knn = Pipeline([
 
 scores = cross_val_score(knn, dataset.content, dataset.sentiment, cv=10)
 print("Accuracy KNN : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+print(scores)
+
+gbc = Pipeline([
+    ('vect', stem_vectorizer),
+    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
+    ('fselect', SelectKBest(chi2, k=1500)),
+    ('clf', GradientBoostingClassifier(n_estimators=300)),
+    ])
+
+scores = cross_val_score(gbc, dataset.content, dataset.sentiment, cv=10)
+print("Accuracy GBC : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
 
 models_pipelines = [

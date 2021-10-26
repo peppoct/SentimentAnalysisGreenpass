@@ -1,15 +1,13 @@
-import csv
+
 import matplotlib.pyplot as plt
-import nltk
 import numpy as np
 import pandas as pd
-import Stemming
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.metrics import plot_confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
+
+
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import svm
@@ -19,7 +17,7 @@ from sklearn import metrics
 from pre_processing import clening
 from text_normalization import normalize_text
 
-dataset = pd.read_csv("./dataset/200dat.csv")
+dataset = pd.read_csv("./dataset/july_to_be_targeted.csv")
 dataset = dataset[~dataset['sentiment'].isnull()]
 dataset = dataset[['content', 'sentiment']]
 dataset = clening(dataset)
@@ -34,7 +32,7 @@ print("class 0 len: " + str(len(dataset[dataset.sentiment == "0"])))
 print("class -1 len: " + str(len(dataset[dataset.sentiment == "-1"])) + '\n')
 
 # splitting Training and Test set
-X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.3)
+X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
 
 # counting the word occurrences
 count_vect = CountVectorizer()
