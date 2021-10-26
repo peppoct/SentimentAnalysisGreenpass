@@ -17,7 +17,7 @@ from sklearn import metrics
 from pre_processing import clening
 from text_normalization import normalize_text
 
-dataset = pd.read_csv("./dataset/july_to_be_targeted.csv")
+dataset = pd.read_csv("./dataset/400a.csv")
 dataset = dataset[~dataset['sentiment'].isnull()]
 dataset = dataset[['content', 'sentiment']]
 dataset = clening(dataset)
