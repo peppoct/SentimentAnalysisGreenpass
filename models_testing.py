@@ -44,7 +44,7 @@ dataset = dataset[['content', 'sentiment']]
 dataset = dataset[~dataset['sentiment'].isnull()]
 neutral = dataset[dataset['sentiment'] == 0.0]
 
-neutral = neutral.sample(n=250)
+neutral = neutral.sample(n=200)
 positive = dataset[dataset['sentiment'] == 1.0]
 negative = dataset[dataset['sentiment'] == -1.0]
 dataset = pd.concat([neutral, positive, negative])
@@ -73,7 +73,7 @@ class StemmedCountVectorizer(CountVectorizer):
 
     def build_analyzer(self):
         analyzer = super(StemmedCountVectorizer, self).build_analyzer()
-        return lambda doc:(self.stemmer.stem(w) for w in analyzer(doc))
+        return lambda doc: (self.stemmer.stem(w) for w in analyzer(doc))
 
 stem_vectorizer = StemmedCountVectorizer(stemmer, stop_words)
 
