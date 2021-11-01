@@ -9,7 +9,7 @@ from pre_processing import clening
 
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier
 
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -17,9 +17,20 @@ from sklearn import svm
 
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-
+from sklearn.model_selection import cross_validate, RepeatedStratifiedKFold
 from sklearn.pipeline import Pipeline
 
+from mlxtend.evaluate import paired_ttest_5x2cv
+
+from mlxtend.evaluate import paired_ttest_kfold_cv
+from sklearn.utils import shuffle
+
+from sklearn.model_selection import KFold
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import ComplementNB
+from scipy.stats import ttest_ind, ttest_rel
+import numpy as np
 from sklearn.model_selection import KFold, GridSearchCV, train_test_split, cross_validate
 
 from sklearn.model_selection import cross_val_score, cross_val_predict
@@ -34,16 +45,6 @@ scoring = [
     'f1_weighted'
     #'roc_auc'
 ]
-
-""""
-# ------------------------ t-test ------------------------ #
-def t_test(pipelineA, pipelineB, dataset, labels, iter):
-    resultA = []
-    
-     #Python paired sample t-test
-     ttest_rel(a, b)
-    """
-
 
 def print_score(model, name):
 
@@ -61,8 +62,101 @@ def print_score(model, name):
     print("f measure  : %0.2f (+/- %0.2f)" % (f_score.mean(), f_score.std() * 2))
     #print(scores)
 
+
+def t_test():
+    """
+    results_A = []
+    results_B = []
+    model_A = {
+        "Accuracy": [],
+        "Precision": [],
+        "Recall": [],
+        "F1 Score": []
+    }
+    model_B = {
+        "Accuracy": [],
+        "Precision": [],
+        "Recall": [],
+        "F1 Score": []
+    }
+
+    scoring = ['accuracy_macro','precision_macro', 'recall_macro', 'f1score_macro']
+    # 30 times 10-fold-cross-cvalidation
+    for i in range(1,iter+1):
+        X, y = cross_val_score(data, label, cv=10)
+        if (i%10 == 0):
+            print("Iteration # {}..." .format(i))
+        results_A.append(cross_validate(estimator=pipeline_A,
+                                        cv=10,
+                                        scoring=scoring,
+                                        n_jobs=-1
+                                        ))
+        results_B.append(cross_validate(estimator=pipeline_B,
+                                        cv=10,
+                                        scoring=scoring,
+                                        n_jobs=-1
+                                        ))
+
+
+    for result in results_A:
+        model_A["Accuracy"].append(np.mean(result['test_accuracy']))
+        model_A["Precision"].append(np.mean(result['test_precision']))
+        model_A["Recall"].append(np.mean(result['test_recall']))
+        model_A["F1 Score"].append(np.mean(result['test_f1_score']))
+
+    for result in results_B:
+        model_B["Accuracy"].append(np.mean(result['test_accuracy']))
+        model_B["Precision"].append(np.mean(result['test_precision']))
+        model_B["Recall"].append(np.mean(result['test_recall']))
+        model_B["F1 Score"].append(np.mean(result['test_f1_score']))
+
+    t, p = paired_ttest_kfold_cv(estimator1=clf1,
+                                 estimator2=clf2,
+                                 X=X, y=y,
+                                 random_seed=1)
+
+    print('t statistic: %.3f' % t)
+    print('p value: %.3f' % p)
+
+    #model1 = np.genfromtxt("model1.csv", delimiter=",")
+    #model2 = np.genfromtxt("model2.csv", delimiter=",")
+
+    #modelA_mean_accuracy = np.mean(model_A["Accuracy"])
+    #modelB_mean_accuracy = np.mean(model_B["Accuracy"])
+
+    #print("Model M1 mean accuracy value:", modelA_mean_accuracy)
+    #print("Model M2 mean accuracy value:", modelB_mean_accuracy)
+    #print("Mean Accuracy rate of model M1: %0.4f (+/- %0.4f)" % (np.mean(model_A["Accuracy"]), np.std(model_A["Accuracy"]) * 2))
+    #print("Mean Accuracy rate of model M2: %0.4f (+/- %0.4f)" % (np.mean(model_B["Accuracy"]), np.std(model_B["Accuracy"]) * 2))
+
+
+    #model1_std = np.std(model1)
+    #model2_std = np.std(model2)
+
+    #print("Model1 std value:", model1_std)
+    #print("Model2 std value:", model2_std)
+    """
+    model_A = LogisticRegression()
+    #modA = model_training.evaluate_classifier(model_A)
+
+    model_B = MultinomialNB()
+    #modB = model_training.evaluate_classifier(model_B)
+
+
+    ttest, pval = ttest_ind(scoresLR, scoresNB)
+    print("p-value:", pval)
+    print("t-test:", ttest)
+
+    if pval <= 0.05:
+        print('Since p<0.05, We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.')
+    else:
+        print('Since p>0.05, we cannot reject the null hypothesis and may conclude that the performance of the two algorithms is not significantly different.')
+    return pval
+
+
+
 # ------------------------ loading input data ------------------------ #
-dataset = pd.read_csv("./dataset/july_to_be_targeted.csv", usecols=['content', 'sentiment'], dtype={'content':'str', 'setiment':'int'})
+dataset = pd.read_csv("./dataset/800a.csv", usecols=['content', 'sentiment'], dtype={'content':'str', 'setiment':'int'})
 dataset = dataset[~dataset['sentiment'].isnull()]
 #neutral = dataset[dataset['sentiment'] == 0]
 #positive = dataset[dataset['sentiment'] == 1]
@@ -163,9 +257,9 @@ logisticRegression = Pipeline([
     ('clf', LogisticRegression()),
     ])
 
-scores = cross_val_score(logisticRegression, data, labels, cv=10)
-print("Accuracy LogisticRegression : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-print(scores)
+scoresLR = cross_val_score(logisticRegression, data, labels, cv=10)
+print("Accuracy LogisticRegression : %0.2f (+/- %0.2f)" % (scoresLR.mean(), scoresLR.std() * 2))
+print(scoresLR)
 
 
 # --------------- SVM ---------------
@@ -209,27 +303,16 @@ tuned_parameters_multinomial = {
 multinomialNB = Pipeline([
     ('vect', CountVectorizer()),
     ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, K=3500)),
+    ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', MultinomialNB()),
     ])
 
-scores = cross_val_score(multinomialNB, data, labels, cv=10)
-print("Accuracy MultinomialNB : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-print(scores)
+scoresNB = cross_val_score(multinomialNB, data, labels, cv=10)
+print("Accuracy MultinomialNB : %0.2f (+/- %0.2f)" % (scoresNB.mean(), scoresNB.std() * 2))
+print(scoresNB)
 
 
-'''
-gaussianNB = Pipeline([
-    ('vect', stem_vectorizer),
-    ('tfidf', TfidfTransformer(smooth_idf=True,use_idf=True)),
-    ('fselect', SelectKBest(chi2, k=3500)),
-    ('clf', GaussianNB()),
-    ])
 
-scores = cross_val_score(gaussianNB, data, labels, cv=10)
-print("Accuracy GaussianNB : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-print(scores)
-'''
 # --------------- K-NN ---------------
 knn = Pipeline([
     ('vect', stem_vectorizer),
@@ -265,7 +348,7 @@ gbc = Pipeline([
 scores = cross_val_score(gbc, data, labels, cv=10)
 print("Accuracy GBC : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
-
+"""
 bg_svm = Pipeline([
     ('vect', CountVectorizer()),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
@@ -276,7 +359,7 @@ bg_svm = Pipeline([
 scores = cross_val_score(bg_svm, data, labels, cv=10)
 print("Accuracy BG-SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
-
+"""
 def best_paramiters_combination(model, tuned_paramiters):
     clf = GridSearchCV(model, tuned_paramiters, cv=10, scoring='accuracy')
     clf.fit(x_train, y_train)
@@ -284,7 +367,7 @@ def best_paramiters_combination(model, tuned_paramiters):
     print(clf.best_params_)
     print(classification_report(y_test, clf.predict(x_test), digits=4))
 
-'''
+
 models_pipelines = [
     {"model name": "Decision Tree", "model": decisionTree},
     {"model name": "Random Forest Classifier", "model": randomForest},
@@ -295,12 +378,8 @@ models_pipelines = [
     {"model name": "Adaboost", "model": adaboost},
     {"model name": "Gradient Boosting Classifier", "model": gbc},
     ]
-    '''
-"""
+
 # ----------------------- cross test ----------------------- #
-for m1 in models_pipelines:
-    for m2 in models_pipelines:
-        if m1 == m2:
-            continue
-        print("Testing Models: M1 {} M2 {}".format(m1["model_name"], m2["model_name"]))
-        #tTest(m1["model"], m2["model"])"""
+
+print("Testing Models: M1 {} M2 {}".format("Logistic Regression", "MultinomialNB"))
+t_test()
