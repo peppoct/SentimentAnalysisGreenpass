@@ -1,3 +1,4 @@
+
 import pandas as pd
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
@@ -11,6 +12,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, Gradien
 
 from sklearn.naive_bayes import MultinomialNB, ComplementNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 

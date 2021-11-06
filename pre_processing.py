@@ -106,7 +106,7 @@ def clening(dataset):
 
 
 if __name__ == '__main__':
-    dataset = pd.read_csv('./dataset/800.csv')
+    dataset = pd.read_csv('../../Downloads/RETWEET-main/RETWEET-main/RETWEET/dataset/800.csv')
     dataset = dataset[['id', 'content', 'sentiment']]
     dataset = dataset[~dataset['sentiment'].isnull()]
 

@@ -11,8 +11,10 @@ from sklearn.feature_selection import SelectKBest, chi2
 
 # ------------------------------- Classifier ------------------------------- #
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier
+
 from sklearn.naive_bayes import MultinomialNB, ComplementNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 

@@ -18,7 +18,7 @@ from sklearn import svm
 
 
 
-dataset = pd.read_csv("./dataset/july_to_be_targeted.csv", usecols=['content', 'sentiment'],
+dataset = pd.read_csv("./dataset/800a.csv", usecols=['content', 'sentiment'],
                       dtype={'content': 'str', 'sentiment': 'int'})
 dataset = dataset[~dataset['sentiment'].isnull()]
 dataset = dataset.sample(frac=1)
@@ -88,7 +88,7 @@ BOW_TFIDF_UNI_Bagging_SVM = Pipeline([
     ('vect', CountVectorizer(ngram_range=(1,1), max_df=0.65)),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=2000)),
-    ('clf', BaggingClassifier(base_estimator=svm.SVC(C=1, kernel='rbf', gamma=1), n_estimators=10)),
+    ('clf', BaggingClassifier(base_estimator=svm.SVC(), n_estimators=10)),
 ])
 
 BOW_TFIDF_UNI_Bagging_Logistic_Regression = Pipeline([
