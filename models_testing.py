@@ -1,16 +1,16 @@
-
 import pandas as pd
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
+
+import utils
 from pre_processing import clening
 
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier
 
 from sklearn.naive_bayes import MultinomialNB, ComplementNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 
@@ -21,6 +21,10 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import cross_val_score
 
 from text_normalization import normalize_text
+
+dataset = pd.read_csv("./dataset/july_to_be_targeted.csv", usecols=['content', 'sentiment', 'date'], dtype={'content': 'str', 'sentiment': 'int'})
+dataset = dataset[~dataset['sentiment'].isnull()]
+utils.save_dataset(dataset, 'july_to_be_targeted')
 
 """"
 # ------------------------ t-test ------------------------ #
@@ -33,7 +37,7 @@ def t_test(pipelineA, pipelineB, dataset, labels, iter):
 
 # ------------------------ loading input data ------------------------ #
 dataset = pd.read_csv("./dataset/july_to_be_targeted.csv", usecols=['content', 'sentiment'],
-                      dtype={'content': 'str', 'setiment': 'int'})
+                      dtype={'content': 'str', 'sentiment': 'int'})
 dataset = dataset[~dataset['sentiment'].isnull()]
 dataset = dataset.sample(frac=1)
 dataset = clening(dataset)
