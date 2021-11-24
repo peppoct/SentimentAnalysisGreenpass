@@ -12,7 +12,6 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, Gradien
 
 from sklearn.naive_bayes import MultinomialNB, ComplementNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 
@@ -24,7 +23,7 @@ from sklearn.model_selection import cross_val_score
 
 from text_normalization import normalize_text
 
-dataset = pd.read_csv("./dataset/july_to_be_targeted.csv", usecols=['content', 'sentiment', 'date'], dtype={'content': 'str', 'sentiment': 'int'})
+dataset = pd.read_csv("./dataset/prova.csv", usecols=['content', 'sentiment', 'date'], dtype={'content': 'str', 'sentiment': 'int'})
 dataset = dataset[~dataset['sentiment'].isnull()]
 utils.save_dataset(dataset, 'july_to_be_targeted')
 

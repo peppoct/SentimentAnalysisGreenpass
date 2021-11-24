@@ -1,11 +1,9 @@
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import SnowballStemmer
-import pandas as pd
 
 stop_words = set(stopwords.words('italian'))
 stemmer = SnowballStemmer('italian')
-
 
 # stopwords filtering function
 def remove_stop_words(tokens):
