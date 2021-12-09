@@ -1,137 +1,51 @@
-import warnings
-warnings.filterwarnings("ignore")
-
+import joblib
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.metrics import plot_confusion_matrix, f1_score,recall_score, precision_score
-from sklearn.model_selection import train_test_split
-
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import svm
-from sklearn import tree
-from sklearn import metrics
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classification_report
 
 from pre_processing import clening
 from text_normalization import normalize_text
 
-dataset = pd.read_csv("./dataset/800a.csv")
-dataset = dataset[~dataset['sentiment'].isnull()]
-dataset = dataset[['content', 'sentiment']]
+dataset = pd.read_csv("./dataset/confusion_matrix_test.csv", usecols=['content', 'sentimentTest'])
+dataset = dataset[~dataset['sentimentTest'].isnull()]
+#dataset = dataset[['content', 'sentimentTest']]
 dataset = clening(dataset)
 data = dataset['content']
-label = dataset['sentiment']
+label = dataset['sentimentTest']
 data = normalize_text(data)
-"""
-print("dataset len: " + str(len(dataset)))
-print("class 1 len: " + str(len(dataset[label == "1"])))
-print("class 0 len: " + str(len(dataset[label == "0"])))
-print("class -1 len: " + str(len(dataset[label == "-1"])) + '\n')
-"""
-# splitting Training and Test set
-X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2)
-
-# counting the word occurrences
-count_vect = CountVectorizer()
-# count_vect = CountVectorizer(stop_words=stopwords,analyzer=stemming,min_df=2)
-X_train_counts = count_vect.fit_transform(X_train)
-#print("List of the extracted tokens")
-#print(count_vect.get_feature_names())
-
-#print("Description of the word occurrences data structures:")
-#print(type(X_train_counts))
-#print("(Documents, Tokens)")
-#print(X_train_counts.shape)
-#print("Word occurrences of the first document:")
-#print(X_train_counts[0])
-
-# extracted tokens
-# print(count_vect.get_feature_names())
-
-# Text representation supervised stage on training set
-tfidf_transformer = TfidfTransformer(smooth_idf=True, use_idf=True)  # include calculation of TFs (frequencies)
-X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
-#print("Values of features extracted from the first document:")
-#print(X_train_tfidf[0])
 
 
-# TF-IDF extraction on test set
-X_test_counts = count_vect.transform(X_test)  # tokenization and word counting
-X_test_tfidf = tfidf_transformer.transform(X_test_counts)  # feature extraction
-
-
-def evaluate_classifier(clf):
-    clf.fit(X_train_tfidf, y_train)
+def evaluate_classifier(clf, name):
+    print(name)
     # Evaluation on test set
-    predicted = clf.predict(X_test_tfidf)  # prediction
+    predicted = clf.predict(data)  # prediction
+
     # Extracting statistics and metrics
-    accuracy = np.mean(predicted == y_test)  # accuracy extraction
-    print('accuracy : ' + str(accuracy))
+    print(classification_report(label, predicted, labels=clf.classes_, target_names=['Negative', 'Neutral', 'Positive'], digits=4))
 
-    f_score = f1_score(y_test, predicted, average='micro', labels=label, zero_division=True)
-    print('f_score : ' + str(f_score))
+    cm = confusion_matrix(label, predicted, labels=clf.classes_, normalize='true')
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negative', 'Neutral', 'Positive'])
 
-    recall = recall_score(y_test, predicted, average='micro',labels=label, zero_division=True)
-    print('recall : ' + str(recall))
-
-    precision = precision_score(y_test, predicted, average='micro', labels=label, zero_division=True)
-    print('precision : ' + str(precision) + '\n')
-
-    disp = plot_confusion_matrix(clf, X_test_tfidf, y_test, cmap=plt.cm.Blues, normalize='true')
-    disp.ax_.set_title('Confusion Matrix')
-    plt.show()
+    disp.plot(cmap=plt.cm.Blues, values_format='g')
+    plt.title("Confusion Matrix: " + name)
+    #disp.ax_.set_title('Confusion Matrix ' + name)
+    plt.savefig('./Confusion_Matrix/Confusion_Matrix_'+name+'.png')
 
 
-# --------------- DECISION TREE ---------------
-clf = tree.DecisionTreeClassifier()
-print("\n")
-print('Decision Tree:')
-evaluate_classifier(clf)
+if __name__ == '__main__':
+    '''
+    bagging = BOW_TFIDF_UNI_Bagging_Logistic_Regression
+    complement = BOW_ComplementNB
+    multinomial = BOW_TFIDF_BI_MultinomialNB
+    '''
+    bagging = joblib.load('./Models/Bagging + Logistic Regression + BOW + TFIDF - UniGram.pkl')
+    complement = joblib.load('./Models/ComplemnetNB + BOW - UniGram.pkl')
+    multinomial = joblib.load('./Models/MultinomialNB + BOW + TFIDF - BiGram.pkl')
+    evaluate_classifier(bagging, 'Bagging_Log_Reg')
+    evaluate_classifier(complement, 'ComplementNB')
+    evaluate_classifier(multinomial, 'MultinomiaNB')
 
-# --------------- RANDOM FOREST ---------------
-clf2 = RandomForestClassifier()
-print("\n")
-print('Random Forest:')
-evaluate_classifier(clf2)
 
-# --------------- LOGISTIC REGRESSION ---------------
-clf3 = LogisticRegression()
-print("\n")
-print('Logistic Regression:')
-evaluate_classifier(clf3)
 
-# --------------- SVC ---------------
-clf4 = svm.LinearSVC()
-print("\n")
-print('SVM:')
-evaluate_classifier(clf4)
 
-# --------------- NAIVE-BAYES ---------------
-clf2 = MultinomialNB()
-print("\n")
-print('Multinomial NB:')
-evaluate_classifier(clf2)
-
-# --------------- K-NN ---------------
-k_neighbor = 5
-clf5 = KNeighborsClassifier(k_neighbor)
-print("\n")
-print('k-NN (k = ' + str(k_neighbor) + ') :')
-evaluate_classifier(clf5)
-
-# --------------- ADABOOST ---------------
-clf6 = AdaBoostClassifier()
-print("\n")
-print('Adaboost:')
-evaluate_classifier(clf6)
-
-# --------------- GBC ---------------
-clf7 = GradientBoostingClassifier()
-print("\n")
-print('Gradient Boosting:')
-evaluate_classifier(clf7)
 

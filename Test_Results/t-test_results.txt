@@ -1,0 +1,106 @@
+***********************************************************************************************
+Testing Models:   M1: ME_SVM    M2: ME_Logistic_regression
+t-statistic: -1.7035144359782877
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6505 (+/- 0.0090)
+Mean Accuracy rate of model M1: 0.6532 (+/- 0.0099)
+Response: We cannot reject the null hypothesis and may conclude that the performance of the two algorithms is not significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_SVM    M2: ME_MultinomialNB
+t-statistic: -1.2470109747897336
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6505 (+/- 0.0090)
+Mean Accuracy rate of model M1: 0.6523 (+/- 0.0048)
+Response: We cannot reject the null hypothesis and may conclude that the performance of the two algorithms is not significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_SVM    M2: ME_ComplementNB
+t-statistic: -4.27943160247292
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6505 (+/- 0.0090)
+Mean Accuracy rate of model M1: 0.6587 (+/- 0.0068)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_SVM    M2: ME_Bagging_SVM
+t-statistic: 3.358592686069495
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6505 (+/- 0.0090)
+Mean Accuracy rate of model M1: 0.6449 (+/- 0.0096)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_SVM    M2: ME_Bagging_Logistic_Regression
+t-statistic: 3.348320720278113
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6505 (+/- 0.0090)
+Mean Accuracy rate of model M1: 0.6449 (+/- 0.0077)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_Logistic_regression    M2: ME_MultinomialNB
+t-statistic: 0.754208314927043
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6532 (+/- 0.0099)
+Mean Accuracy rate of model M1: 0.6523 (+/- 0.0048)
+Response: We cannot reject the null hypothesis and may conclude that the performance of the two algorithms is not significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_Logistic_regression    M2: ME_ComplementNB
+t-statistic: -3.8630897586774156
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6532 (+/- 0.0099)
+Mean Accuracy rate of model M1: 0.6587 (+/- 0.0068)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_Logistic_regression    M2: ME_Bagging_SVM
+t-statistic: 4.315918221818738
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6532 (+/- 0.0099)
+Mean Accuracy rate of model M1: 0.6454 (+/- 0.0060)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_Logistic_regression    M2: ME_Bagging_Logistic_Regression
+t-statistic: 5.301041319137217
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6532 (+/- 0.0099)
+Mean Accuracy rate of model M1: 0.6435 (+/- 0.0052)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_MultinomialNB    M2: ME_ComplementNB
+t-statistic: -7.961547049823428
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6523 (+/- 0.0048)
+Mean Accuracy rate of model M1: 0.6587 (+/- 0.0068)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_MultinomialNB    M2: ME_Bagging_SVM
+t-statistic: 8.628262911357604
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6523 (+/- 0.0048)
+Mean Accuracy rate of model M1: 0.6433 (+/- 0.0072)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_MultinomialNB    M2: ME_Bagging_Logistic_Regression
+t-statistic: 6.587832351157095
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6523 (+/- 0.0048)
+Mean Accuracy rate of model M1: 0.6449 (+/- 0.0082)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_ComplementNB    M2: ME_Bagging_SVM
+t-statistic: 8.867269256005546
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6587 (+/- 0.0068)
+Mean Accuracy rate of model M1: 0.6439 (+/- 0.0090)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_ComplementNB    M2: ME_Bagging_Logistic_Regression
+t-statistic: 8.644449666457493
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6587 (+/- 0.0068)
+Mean Accuracy rate of model M1: 0.6445 (+/- 0.0107)
+Response: We can reject the null-hypothesis that both models perform equally well on this dataset. We may conclude that the two algorithms are significantly different.
+***********************************************************************************************
+Testing Models:   M1: ME_Bagging_SVM    M2: ME_Bagging_Logistic_Regression
+t-statistic: -0.9045255325250874
+c-critical: 2.262
+Mean Accuracy rate of model M1: 0.6433 (+/- 0.0099)
+Mean Accuracy rate of model M1: 0.6446 (+/- 0.0076)
+Response: We cannot reject the null hypothesis and may conclude that the performance of the two algorithms is not significantly different.
+***********************************************************************************************
