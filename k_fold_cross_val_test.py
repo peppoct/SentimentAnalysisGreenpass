@@ -204,27 +204,3 @@ bg_svm = Pipeline([
 scores = cross_val_score(bg_svm, data, labels, cv=10)
 print("Accuracy BG-SVM : %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 print(scores)
-
-
-
-
-'''
-models_pipelines = [
-    {"model name": "Decision Tree", "model": decisionTree},
-    {"model name": "Random Forest Classifier", "model": randomForest},
-    {"model name": "Logistic Regression", "model": logisticRegression},
-    {"model name": "SVM", "model": svm},
-    {"model name": "MultinomialNB", "model": multinomialNB},
-    {"model name": "KNeighbors", "model": knn},
-    {"model name": "Adaboost", "model": adaboost},
-    {"model name": "Gradient Boosting Classifier", "model": gbc},
-    ]
-    '''
-"""
-# ----------------------- cross test ----------------------- #
-for m1 in models_pipelines:
-    for m2 in models_pipelines:
-        if m1 == m2:
-            continue
-        print("Testing Models: M1 {} M2 {}".format(m1["model_name"], m2["model_name"]))
-        #tTest(m1["model"], m2["model"])"""

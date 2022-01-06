@@ -373,6 +373,7 @@ for model in models_pipelines:
         best_std_score = results['std_test_%s' % scorer][best_index]
         model_results["%s mean scores" % scorer].append(best_mean_score)
         model_results["%s std scores" % scorer].append(best_std_score)
+
     print(model_results)
     with open('./MTT_Results/MTT_' + name + '_results', 'w') as fout:
         json.dump(model_results, fout, indent=4)
