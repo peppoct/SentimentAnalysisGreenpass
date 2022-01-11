@@ -20,10 +20,13 @@ def evaluate_classifier(clf, name):
     predicted = clf.predict(data)  # prediction
 
     # Extracting statistics and metrics
-    print(classification_report(label, predicted, labels=clf.classes_, target_names=['Negative', 'Neutral', 'Positive'], digits=4))
+    report = classification_report(label, predicted, labels=clf.classes_, target_names=['Negative', 'Neutral', 'Positive'], digits=4, output_dict=True)
 
     cm = confusion_matrix(label, predicted, labels=clf.classes_, normalize='true')
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negative', 'Neutral', 'Positive'])
+
+    clsf_report = pd.DataFrame(report).transpose()
+    clsf_report.to_csv('./Models/'+name+'test_results.csv', index=True)
 
     disp.plot(cmap=plt.cm.Blues, values_format='g')
     plt.title("Confusion Matrix: " + name)
@@ -37,10 +40,10 @@ if __name__ == '__main__':
     complement = BOW_ComplementNB
     multinomial = BOW_TFIDF_BI_MultinomialNB
     '''
-    bagging = joblib.load('./Models/Bagging + Logistic Regression + BOW + TFIDF - UniGram.pkl')
-    complement = joblib.load('./Models/ComplemnetNB + BOW - UniGram.pkl')
-    multinomial = joblib.load('./Models/MultinomialNB + BOW + TFIDF - BiGram.pkl')
-    evaluate_classifier(bagging, 'Bagging_Log_Reg')
+    svm = joblib.load('./Models/SVM + BOW + TFIDF - UniGram.pkl')
+    complement = joblib.load('./Models/ComplementNB + BOW + TFIDF - UniGram.pkl')
+    multinomial = joblib.load('./Models/MultinomialNB + BOW + TFIDF - UniGram.pkl')
+    evaluate_classifier(svm, 'SVM')
     evaluate_classifier(complement, 'ComplementNB')
     evaluate_classifier(multinomial, 'MultinomiaNB')
 
