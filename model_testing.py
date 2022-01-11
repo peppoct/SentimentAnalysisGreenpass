@@ -5,12 +5,12 @@ from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix, classifica
 from pre_processing import clening
 from text_normalization import normalize_text
 
-dataset = pd.read_csv("./dataset/confusion_matrix_test.csv", usecols=['content', 'sentimentTest'])
-dataset = dataset[~dataset['sentimentTest'].isnull()]
+dataset = pd.read_csv("./dataset/peak_1.csv", usecols=['content', 'sentiment'])
+dataset = dataset[~dataset['sentiment'].isnull()]
 #dataset = dataset[['content', 'sentimentTest']]
 dataset = clening(dataset)
 data = dataset['content']
-label = dataset['sentimentTest']
+label = dataset['sentiment']
 data = normalize_text(data)
 
 

@@ -18,23 +18,23 @@ BOW_TFIDF_UNI_SVM = Pipeline([
 
 # ---------------------------------- LOGISTIC REGRESSION ---------------------------------- #
 BOW_TFIDF_UNI_Logistic_Regression = Pipeline([
-    ('vect', CountVectorizer(ngram_range=(1,2), max_df=0.65)),
+    ('vect', CountVectorizer(ngram_range=(1,1), max_df=0.65)),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
-    ('fselect', SelectKBest(chi2, k='all')),
-    ('clf', LogisticRegression(C=10, max_iter=1500)),
+    ('fselect', SelectKBest(chi2, k=3500)),
+    ('clf', LogisticRegression(C=1, max_iter=1500)),
 ])
 
 # ----------------------------------- NAIVE-BAYES ----------------------------------- #
 BOW_TFIDF_BI_MultinomialNB = Pipeline([
-    ('vect', CountVectorizer(ngram_range=(1, 2), max_df=0.65)),
+    ('vect', CountVectorizer(ngram_range=(1, 1), max_df=0.65)),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k='all')),
-    ('clf', MultinomialNB(alpha=0.1)),
+    ('clf', MultinomialNB(alpha=1)),
 ])
 
 BOW_ComplementNB = Pipeline([
-    ('vect', CountVectorizer(ngram_range=(1, 2), max_df=0.65)),
-    ('fselect', SelectKBest(chi2, k='all')),
+    ('vect', CountVectorizer(ngram_range=(1, 1), max_df=0.65)),
+    ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', ComplementNB(alpha=1)),
 ])
 

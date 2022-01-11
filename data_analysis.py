@@ -111,24 +111,16 @@ def generate_training_sets(pick):
 
 tuned_parameters_naive_bayes = {
     'vect__max_df': (0.65, 0.75, 0.85, 1.0),
-    'vect__ngram_range':((1, 1), (1, 2)),
     'fselect__k': ['all', 1000, 2000, 3000, 3500, 4000],
     'clf__alpha': [1, 1e-1, 1e-2]
 }
 
 BOW_ComplementNB = Pipeline([
-    ('vect', CountVectorizer()),
+    ('vect', CountVectorizer((1, 1))),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2)),
     ('clf', ComplementNB()),
 ])
-
-scoring = {
-        'accuracy': make_scorer(accuracy_score),
-        'precision': make_scorer(precision_score, average='micro', zero_division=True),
-        'recall': make_scorer(recall_score, average='micro', zero_division=True),
-        'f1_score': make_scorer(f1_score, average='micro', zero_division=True)
-    }
 
 def validate_classifier(mode, peak, x_train, y_train):
     results = {
@@ -143,10 +135,18 @@ def validate_classifier(mode, peak, x_train, y_train):
         "best params": [],
     }
 
+    scoring = {
+        'accuracy': make_scorer(accuracy_score),
+        'precision': make_scorer(precision_score, average='micro', labels=y_train, zero_division=True),
+        'recall': make_scorer(recall_score, average='micro', labels=y_train, zero_division=True),
+        'f1_score': make_scorer(f1_score, average='micro', labels=y_train, zero_division=True)
+    }
 
     model = GridSearchCV(BOW_ComplementNB, tuned_parameters_naive_bayes, cv=10, scoring=scoring, refit="accuracy", n_jobs=-1)
     model.fit(x_train, y_train)
     results["best params"].append(model.best_params_)
+
+    #model.estimator.named_steps['vect'].get_feature_names()
 
     model_results = model.cv_results_
 
@@ -173,7 +173,7 @@ def evaluate_classifier(clf, mode, peak, x_test, y_test):
 
     # Evaluation on test set
     predicted = clf.predict(x_test)  # prediction
-
+    print(clf.classes_, 'Negative', 'Neutral', 'Positive')
     # Extracting statistics and metrics
     report = classification_report(y_test, predicted, labels=clf.classes_, target_names=['Negative', 'Neutral', 'Positive'], digits=4, output_dict=True)
     print(report)
@@ -263,5 +263,5 @@ def generate_peak():
     print(len(d))
 
 if __name__ == '__main__':
-    generate_models(2)
+    generate_models(1)
     pass
