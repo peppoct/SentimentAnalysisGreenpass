@@ -13,8 +13,8 @@ from text_normalization import normalize_text
 pipelines = [
     {'model name': 'ME_SVM', 'pipeline': BOW_TFIDF_UNI_SVM},
     {'model name': 'ME_Logistic_regression', 'pipeline': BOW_TFIDF_UNI_Logistic_Regression},
-    {'model name': 'ME_MultinomialNB', 'pipeline': BOW_UNI_MultinomialNB},
-    {'model name': 'ME_ComplementNB', 'pipeline': BOW_TFIDF_ComplementNB},
+    {'model name': 'ME_MultinomialNB', 'pipeline': BOW_TFIDF_UNI_MultinomialNB},
+    {'model name': 'ME_ComplementNB', 'pipeline': BOW_TFIDF_UNI_ComplementNB},
     {'model name': 'ME_Bagging_SVM', 'pipeline': BOW_TFIDF_UNI_Bagging_SVM},
     {'model name': 'ME_Bagging_Logistic_Regression', 'pipeline': BOW_TFIDF_UNI_Bagging_Logistic_Regression}
 ]
