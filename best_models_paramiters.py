@@ -34,6 +34,7 @@ BOW_TFIDF_BI_MultinomialNB = Pipeline([
 
 BOW_ComplementNB = Pipeline([
     ('vect', CountVectorizer(ngram_range=(1, 1), max_df=0.65)),
+('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2, k=3500)),
     ('clf', ComplementNB(alpha=1)),
 ])
