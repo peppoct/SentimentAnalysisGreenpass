@@ -31,6 +31,7 @@ def remove_punctuation(row_field):
     return tweet
 
 def remove_from_string(tweet):
+
     # Replaces URLs with
     tweet = re.sub(r'((www\.[\S]+)|(https?://[\S]+))', '', tweet)
     # Replace @handle with the word USER_MENTION
@@ -95,7 +96,6 @@ def clean(tweet):
 
 def clening(dataset):
     for row_index, tweet in dataset.iterrows():
-
         processed_tweet = clean(tweet.content)
         if (len(processed_tweet) > 0):
             dataset.loc[row_index, "content"] = processed_tweet
@@ -106,16 +106,4 @@ def clening(dataset):
 
 
 if __name__ == '__main__':
-    dataset = pd.read_csv('../../Downloads/RETWEET-main/RETWEET-main/RETWEET/dataset/800.csv')
-    dataset = dataset[['id', 'content', 'sentiment']]
-    dataset = dataset[~dataset['sentiment'].isnull()]
-
-    for row_index, tweet in dataset.iterrows():
-
-        processed_tweet = clean(tweet.content)
-        if (len(processed_tweet) > 0):
-            dataset.loc[row_index, "content"] = processed_tweet
-        else:
-            dataset.drop(index=row_index, inplace=True)
-
-    u.save_dataset(dataset, "800a")
+    pass

@@ -1,0 +1,39 @@
+{
+    "accuracy mean scores": [
+        0.35072016460905353
+    ],
+    "accuracy std scores": [
+        0.006719764463993119
+    ],
+    "precision mean scores": [
+        0.35061624794200796
+    ],
+    "precision std scores": [
+        0.006532225892206268
+    ],
+    "recall mean scores": [
+        0.3548912279390364
+    ],
+    "recall std scores": [
+        0.009206179308406911
+    ],
+    "f1_score mean scores": [
+        0.35273010316282283
+    ],
+    "f1_score std scores": [
+        0.00772791129842434
+    ],
+    "best params": [
+        {
+            "clf__criterion": "entropy",
+            "clf__max_depth": 1.0,
+            "clf__min_samples_leaf": 2,
+            "clf__min_samples_split": 2,
+            "fselect__k": "all",
+            "vect__max_df": 0.65
+        }
+    ],
+    "execution time": [
+        13.0
+    ]
+}

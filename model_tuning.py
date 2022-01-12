@@ -1,6 +1,7 @@
 import json
 import time
 
+import joblib
 import numpy as np
 import pandas as pd
 
@@ -40,7 +41,6 @@ scoring = {
     'precision': make_scorer(precision_score, average='micro', labels=labels, zero_division=True),
     'recall': make_scorer(recall_score, average='micro', labels=labels, zero_division=True),
     'f1_score': make_scorer(f1_score, average='micro', labels=labels, zero_division=True)
-    # 'roc_auc': make_scorer(roc_auc_score, average='micro', labels=labels)
 }
 
 labels_codes = {
@@ -127,15 +127,15 @@ BOW_TFIDF_BI_MultinomialNB = Pipeline([
 
 
 
-BOW_TFIDF_ComplementNB = Pipeline([
-    ('vect', CountVectorizer()),
+BOW_TFIDF_UNI_ComplementNB = Pipeline([
+    ('vect', CountVectorizer(ngram_range=(1, 1))),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2)),
     ('clf', ComplementNB()),
 ])
 
-BOW_ComplemntNB = Pipeline([
-    ('vect', CountVectorizer()),
+BOW_UNI_ComplemntNB = Pipeline([
+    ('vect', CountVectorizer(ngram_range=(1, 1))),
     ('fselect', SelectKBest(chi2)),
     ('clf', ComplementNB()),
 ])
@@ -295,9 +295,9 @@ BOW_TFIDF_UNI_Bagging = Pipeline([
 
 # -------------------------------------------------- Test Pipelines ------------------------------------------------- #
 models_pipelines = [
-    {"model name": "Gradient Boosting Classifier + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_Gradient_Boosting, 'paramiters': tuned_parameters_Boost}
-
-
+    {"model name": "SVM + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_SVM, 'paramiters': tuned_parameters_svm},
+{"model name": "MultinomialNB + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_MultinomialNB, 'paramiters': tuned_parameters_naive_bayes},
+{"model name": "ComplementNB + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_ComplementNB, 'paramiters': tuned_parameters_naive_bayes}
 ]
 
 '''
@@ -313,14 +313,17 @@ models_pipelines = [
 
     {"model name": "ComplementNB + BOW + TFIDF", "model": BOW_TFIDF_ComplementNB, 'paramiters': tuned_parameters_naive_bayes},
     {"model name": "ComplementNB + BOW", "model": BOW_ComplemntNB, 'paramiters': tuned_parameters_naive_bayes},
+    {"model name": "ComplemnetNB + BOW - UniGram", "model": BOW_TFIDF_BI_MultinomialNB, 'paramiters': tuned_parameters_naive_bayes}
 
     {"model name": "Decision Tree + BOW + TFIDF - BiGram", "model": BOW_TFIDF_BI_Decision_Tree, 'paramiters': tuned_parameters_decision_tree}, #ok
     {"model name": "Decision Tree + BOW - BiGram", "model": BOW_BI_Decision_Tree, 'paramiters': tuned_parameters_decision_tree}     #ok
     {"model name": "Decision Tree + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_Decision_Tree, 'paramiters': tuned_parameters_decision_tree},    #ok
     {"model name": "Decision Tree + BOW - UniGram", "model": BOW_UNI_Decision_Tree, 'paramiters': tuned_parameters_decision_tree}   #ok
-
+    {"model name": "Bagging + Logistic Regression + BOW + TFIDF - UniGram", "model": BOW_TFIDF_Bagging_Logistic_Regression, 'paramiters': tuned_parameters_Bagging}
+    
     {"model name": "Random Forest Classifier + BOW - UniGram", "model": BOW_UNI_Random_Forest, 'paramiters': tuned_parameters_random_forest}
-
+    {"model name": "Gradient Boosting Classifier + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_Gradient_Boosting, 'paramiters': tuned_parameters_Boost}
+    
     {"model name": "Logistic Regression + BOW + TFIDF - UniGram", "model": BOW_TFIDF_UNI_Logistic_Regression,'paramiters': tuned_parameters_logistic_regression},
     {"model name": "Logistic Regression + BOW - UniGram", "model": BOW_UNI_Logistic_Regression,'paramiters': tuned_parameters_logistic_regression},
     {"model name": "Logistic Regression + BOW + TFIDF - BiGram", "model": BOW_TFIDF_BI_Logistic_Regression,'paramiters': tuned_parameters_logistic_regression},
@@ -373,9 +376,10 @@ for model in models_pipelines:
         best_std_score = results['std_test_%s' % scorer][best_index]
         model_results["%s mean scores" % scorer].append(best_mean_score)
         model_results["%s std scores" % scorer].append(best_std_score)
+
     print(model_results)
     with open('./MTT_Results/MTT_' + name + '_results', 'w') as fout:
         json.dump(model_results, fout, indent=4)
     # saving best estimator
-    # model_name = './tuned_models/' + str(name) + ".pkl"
-    # joblib.dump(clf, model_name, compress=1)
+    model_name = './Models/' + str(name) + ".pkl"
+    joblib.dump(clf, model_name, compress=1)

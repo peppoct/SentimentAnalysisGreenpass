@@ -1,0 +1,38 @@
+{
+    "accuracy mean scores": [
+        0.6295807191526681
+    ],
+    "accuracy std scores": [
+        0.03731300502672431
+    ],
+    "precision mean scores": [
+        0.6295390450142402
+    ],
+    "precision std scores": [
+        0.03718152887230424
+    ],
+    "recall mean scores": [
+        0.6299657588427496
+    ],
+    "recall std scores": [
+        0.03722246298432156
+    ],
+    "f1_score mean scores": [
+        0.6297522740952195
+    ],
+    "f1_score std scores": [
+        0.037201442567185605
+    ],
+    "best params": [
+        {
+            "clf__C": 10,
+            "clf__gamma": 0.01,
+            "clf__kernel": "rbf",
+            "fselect__k": 2500,
+            "vect__max_df": 0.65
+        }
+    ],
+    "execution time": [
+        55.0
+    ]
+}
