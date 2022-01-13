@@ -116,7 +116,7 @@ tuned_parameters_naive_bayes = {
 }
 
 BOW_ComplementNB = Pipeline([
-    ('vect', CountVectorizer((1, 1))),
+    ('vect', CountVectorizer(ngram_range=(1, 1))),
     ('tfidf', TfidfTransformer(smooth_idf=True, use_idf=True)),
     ('fselect', SelectKBest(chi2)),
     ('clf', ComplementNB()),
@@ -185,6 +185,7 @@ def evaluate_classifier(clf, mode, peak, x_test, y_test):
     clsf_report.to_csv('./Monitoring/Complement_'+mode+'_test_result_peak_'+str(peak)+'.csv', index=True)
 
     cm = confusion_matrix(y_test, predicted, labels=clf.classes_, normalize='true')
+    print(clf.classes_)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Negative', 'Neutral', 'Positive'])
 
     disp.plot(cmap=plt.cm.Blues, values_format='g')
@@ -193,13 +194,12 @@ def evaluate_classifier(clf, mode, peak, x_test, y_test):
     plt.savefig('./Confusion_Matrix/Confusion_Matrix_Complement_'+mode+'_peak_'+str(peak)+'.png')
 
 def generate_models(peak):
-    _, _, static_test = generate_sets(peak)
+    _, _ = generate_sets(peak)
     incremental_set = pd.read_csv('./dataset/incremental_peak_' + str(peak) + '.csv')
     sliding_set = pd.read_csv('./dataset/sliding_peak_' + str(peak) + '.csv')
 
     incremental_set = clening(incremental_set)
     sliding_set = clening(sliding_set)
-    static_test = clening(static_test)
 
     incremental_data = normalize_text(incremental_set['content'])
     incremental_labels = incremental_set['sentiment']
@@ -207,20 +207,22 @@ def generate_models(peak):
     sliding_data = normalize_text(sliding_set['content'])
     sliding_labels = sliding_set['sentiment']
 
-    static_data = normalize_text(static_test['content'])
-    static_labels = static_test['sentiment']
 
-    x_incremental_train, x_incremental_test, y_incremental_train, y_incremental_test = train_test_split(
-        incremental_data, incremental_labels, test_size=0.15)
-    x_sliding_train, x_sliding_test, y_sliding_train, y_sliding_test = train_test_split(sliding_data, sliding_labels,
-                                                                                        test_size=0.15)
-    incremental_model = validate_classifier('incremental', peak, x_incremental_train, y_incremental_train)
-    sliding_model = validate_classifier('sliding', peak, x_sliding_train, y_sliding_train)
-    static_model = joblib.load('./Models/ComplemnetNB + BOW - UniGram.pkl')
+    incremental_model = validate_classifier('incremental', peak, incremental_data, incremental_labels)
+    sliding_model = validate_classifier('sliding', peak, sliding_data, sliding_labels)
+    static_model = joblib.load('./Models/ComplementNB + BOW + TFIDF - UniGram.pkl')
 
-    evaluate_classifier(incremental_model, 'incremental', peak, x_incremental_test, y_incremental_test)
-    evaluate_classifier(sliding_model, 'sliding', peak, x_sliding_test, y_sliding_test)
-    evaluate_classifier(static_model, 'static', peak, static_data, static_labels)
+    # test the models on newest tweets
+    next_peak = pd.read_csv('./dataset/peak_'+str(peak+1)+'.csv')
+    next_peak = next_peak[~next_peak['sentiment'].isnull()]
+    print(next_peak.shape)
+    next_peak = clening(next_peak)
+    next_peak_data = normalize_text(next_peak['content'])
+    next_peak_label = next_peak['sentiment']
+
+    evaluate_classifier(incremental_model, 'incremental', peak, next_peak_data, next_peak_label)
+    evaluate_classifier(sliding_model, 'sliding', peak, next_peak_data, next_peak_label)
+    evaluate_classifier(static_model, 'static', peak, next_peak_data, next_peak_label)
 
 def generate_sets(peak):
     # previous training set
@@ -250,18 +252,19 @@ def generate_sets(peak):
     sliding_set = pd.concat([old_sliding, new_labeled_tweets], axis=0)
     u.save_dataset(sliding_set, 'sliding_peak_' + str(peak))
                                         # test static model
-    return incremental_set, sliding_set, new_labeled_tweets
+    return incremental_set, sliding_set
 
 def generate_peak():
     d = pd.read_csv('./dataset/complete_dataset_cleaned.csv')
     d = d[['id', 'content', 'date']]
-    d = d[(d['date']>'10-12-2021') & (d['date']<='11-24-2021')]
+    d = d[(d['date']>'11-24-2021') & (d['date']<='12-06-2021')]
     d['content'] = d['content'].str.strip()
     d['content'] = d['content'].replace('\s+', ' ', regex=True)
     d['sentiment'] = ""
-    u.save_dataset(d, 'peak_5')
+    u.save_dataset(d, 'peak_6')
     print(len(d))
 
 if __name__ == '__main__':
-    generate_models(1)
+    generate_models(6)
+
     pass
