@@ -1,6 +1,6 @@
 # SentimentAnalysisGreenpass
 
-the project developed with my colleague Giuseppe in which we perform a text mining analysis about the Green pass.
+In this project we perform a text mining analysis about the Green pass.
 
 Twitter has been exploited by people to express their opinions supporting or opposing measures taken by different governments against the pandemic. 
 One of the most discussed topics was and is the introduction of the green pass. Hence we retrieved tweets related to this topic in order to understand what people in Italy think about the green pass
