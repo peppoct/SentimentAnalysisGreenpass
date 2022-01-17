@@ -207,7 +207,10 @@ def generate_models(peak):
     sliding_data = normalize_text(sliding_set['content'])
     sliding_labels = sliding_set['sentiment']
 
-
+    '''
+    model = joblib.load('./Monitoring/Complement_incremental_model_peak_6.pkl')
+    print(model.best_estimator_[3].n_features_in_)
+    '''
     incremental_model = validate_classifier('incremental', peak, incremental_data, incremental_labels)
     sliding_model = validate_classifier('sliding', peak, sliding_data, sliding_labels)
     static_model = joblib.load('./Models/ComplementNB + BOW + TFIDF - UniGram.pkl')
