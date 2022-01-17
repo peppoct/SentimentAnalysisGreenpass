@@ -1,38 +1,38 @@
 {
     "accuracy mean scores": [
-        0.6575102880658437
+        0.6541978681778318
     ],
     "accuracy std scores": [
-        0.03255886323682367
+        0.027128696275281035
     ],
     "precision mean scores": [
-        0.6575721534332645
+        0.6542790950110979
     ],
     "precision std scores": [
-        0.03256013180632748
+        0.02715935813194997
     ],
     "recall mean scores": [
-        0.6579379556413906
+        0.6543472942932029
     ],
     "recall std scores": [
-        0.03240678420476227
+        0.027076985814932696
     ],
     "f1_score mean scores": [
-        0.657754872284831
+        0.6543131700479052
     ],
     "f1_score std scores": [
-        0.032482317186461294
+        0.027117924306957322
     ],
     "best params": [
         {
-            "clf__C": 10,
+            "clf__C": 1,
             "clf__gamma": 1,
             "clf__kernel": "rbf",
-            "fselect__k": "all",
+            "fselect__k": 3000,
             "vect__max_df": 0.65
         }
     ],
     "execution time": [
-        52.0
+        54.0
     ]
 }
