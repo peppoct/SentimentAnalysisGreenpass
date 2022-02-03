@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn import svm
@@ -54,6 +55,7 @@ pipelines = [
     {'name': 'SVM', 'pipeline': svm}
 ]
 
+'''
 for pipe in pipelines:
     predicted = cross_val_predict(pipe['pipeline'], X=data, y=label, cv=10, n_jobs=-1)
 
@@ -69,3 +71,17 @@ for pipe in pipelines:
     plt.title("Confusion Matrix - " + pipe['name'])
 
     plt.savefig('./CV_results/Confusion_Matrix_' + pipe['name'] + '.png')
+
+'''
+
+if __name__ == '__main__':
+
+    for pipe in pipelines:
+        clf = pipe['pipeline']
+        clf.fit(data, label)
+        # Save to file in the current working directory
+        joblib.dump(clf, './models/'+pipe['name']+'.pkl')
+
+        #print(len(clf[0].get_feature_names()))
+        # Load from file
+        #joblib_model = joblib.load(joblib_file)
