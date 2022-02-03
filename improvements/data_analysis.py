@@ -95,7 +95,6 @@ def train_classifier(clf, name, mode, peak, x_train, y_train):
 
     print(len(clf[0].get_feature_names()))
 
-    return model
 
 def evaluate_classifier(clf, name, mode, peak, x_test, y_test):
 
@@ -113,9 +112,8 @@ def evaluate_classifier(clf, name, mode, peak, x_test, y_test):
 def generate_models(peak, pipe):
 
     incremental_set = pd.read_csv('../dataset/incremental_peak_' + str(peak) + '.csv')
-    print(len(incremental_set))
     sliding_set = pd.read_csv('../dataset/sliding_peak_' + str(peak) + '.csv')
-    print(len(sliding_set))
+
 
     incremental_set = clening(incremental_set)
     sliding_set = clening(sliding_set)
@@ -127,8 +125,11 @@ def generate_models(peak, pipe):
     sliding_labels = sliding_set['sentiment']
 
 
-    incremental_model = train_classifier(pipe['pipeline'], pipe['name'], 'incremental', peak, incremental_data, incremental_labels)
-    sliding_model = train_classifier(pipe['pipeline'], pipe['name'], 'sliding', peak, sliding_data, sliding_labels)
+    train_classifier(pipe['pipeline'], pipe['name'], 'incremental', peak, incremental_data, incremental_labels)
+    train_classifier(pipe['pipeline'], pipe['name'], 'sliding', peak, sliding_data, sliding_labels)
+
+    incremental_model = joblib.load('models/' + pipe['name'] + '_incremental_model_peak_' + str(peak) + '.pkl')
+    sliding_model = joblib.load('models/' + pipe['name'] + '_sliding_model_peak_' + str(peak) + '.pkl')
     static_model = joblib.load('models/' + pipe['name'] + '.pkl')
 
     # test the models on newest tweets
@@ -145,6 +146,6 @@ def generate_models(peak, pipe):
 
 if __name__ == '__main__':
     for pipe in pipelines:
-        generate_models(2, pipe)
+        generate_models(6, pipe)
 
     pass
